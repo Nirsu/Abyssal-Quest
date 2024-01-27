@@ -43,16 +43,18 @@ function game_init()
   p = {
     x=8,
     y=24,
-    speed=3,
+    speed=2,
     -- flip sprite horizontally
     flip = false,
     -- Sprite to draw, sprite frames to use, speed of animation (between 0 == fast and 1 == slow), ticks since last frame
     idle = 1,
     running = {sprite = 2, frames = {2, 3, 4}, speed = 0.1, ticks = 0},
     running_up = {sprite = 5, frames = {5, 6}, speed = 0.1, ticks = 0},
-    dodging = {sprite = 17, frames = {17, 18, 19, 20}, speed = 0.1, ticks = 0},
+    -- TODO: FIX THIS, and make it work like the other animations
+    --dodging = {sprite = 17, frames = {17, 18, 19, 20}, speed = 0.1, ticks = 0},
 
     timer_dodge = 0,
+    dodge_max_cooldown=50,
     can_roll=true,
   }
 
@@ -139,18 +141,19 @@ function draw_p()
 end
 
 function update_dodging()
-  p_dodging = false
-
-  if p.timer_dodge>0 and p.timer_dodge<12 then
-    p.timer_dodge+=1
-    p.can_roll = false
-    p.speed = 5
-    p_dodging = true
+	p_dodging = false
+  p.speed = 2
+	if p.timer_dodge>0 and p.timer_dodge<p.dodge_max_cooldown and p_moving then
+		p.timer_dodge+=1
+    if p.timer_dodge<12 then
+      p.can_roll = false
+      p.speed = 4
+      p_dodging = true
+    end
   else
     p.timer_dodge=0
-    p.speed = 3
     p.can_roll = true
-  end
+ end
 end
 
 -->8
