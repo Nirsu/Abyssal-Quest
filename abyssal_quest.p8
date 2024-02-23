@@ -58,12 +58,14 @@ function game_init()
     can_roll=true,
   }
 
+  init_phantom()
+
   _update60=game_update
   _draw=game_draw
 end
 
 function game_update()
-  update_camera()
+  update_camera(boss)
   update_p()
 end
 
@@ -71,6 +73,7 @@ function game_draw()
   cls()
   map(0,0,0,0,254, 254)
   draw_p()
+  draw_phantom()
 end
 
 -->8
@@ -125,7 +128,6 @@ function update_p()
 end
 
 function draw_p()
-  print(p.timer_dodge, p.x - 8, p.y - 8, 7)
 
   if (p_moving) then
     if (p_dodging) then
@@ -157,10 +159,41 @@ function update_dodging()
 end
 
 -->8
+--Phantom Blade
+
+function init_phantom()
+  boss = {
+    x=128,
+    y=128,
+    speed=3,
+    pv=100,
+  }
+end
+
+function draw_phantom()
+  -- spr(16, boss.x, boss.y, 1, 1, false)
+  rectfill(boss.x, boss.y, boss.x + 16, boss.y + 16, 7)
+end
+
+-->8
 --camera
 
-function update_camera()
-  camera(p.x - 64, p.y - 64)
+function lerp(a, b, t)
+  return a + (b - a) * t
+end
+
+function update_camera(target)
+  local focusMargin = 0.3 -- Controle la distance entre le joueur et le point de focalisation (0 = sur le joueur, 1 = sur la cible)
+  
+  -- Calcule le point intermediaire entre le joueur et la cible
+  local focusX = lerp(p.x, target.x, focusMargin)
+  local focusY = lerp(p.y, target.y, focusMargin)
+
+  -- Positionne la caméra pour qu'elle centre ce point intermédiaire, tout en assurant une marge autour du joueur
+  local camX = focusX - 64 -- Assurez-vous que 64 est la moitié de la largeur de votre écran de vue
+  local camY = focusY - 64 -- Assurez-vous que 64 est la moitié de la hauteur de votre écran de vue
+
+  camera(camX, camY)
 end
 
 -->8
