@@ -129,10 +129,20 @@ function update_pod()
 end
 
 function shoot_pod()
+  local dx = boss.x - pod.x
+  local dy = boss.y - pod.y
+  local distance = sqrt(dx * dx + dy * dy)
+
+  local nx = dx / distance
+  local ny = dy / distance
+
+  local speed = 4;
+
   local newBullet = {
     x = pod.x,
     y = pod.y + 1,
-    speed = 4,
+    vx = nx * speed,
+    vy = ny * speed,
   }
   add(pod.bullets, newBullet)
 end
@@ -145,7 +155,14 @@ end
 
 function update_bullets_pod()
   for b in all(pod.bullets) do
-    b.x += b.speed
+    b.x += b.vx
+    b.y += b.vy
+
+    if (b.x > boss.x and b.x < boss.x + boss.width and b.y > boss.y and b.y < boss.y + boss.height) then
+      boss.pv -= 1
+      del(pod.bullets, b)
+    end
+
     if (b.x < 8 or b.x > 248 or b.y < 8 or b.y > 248) del(pod.bullets, b)
   end
 end
@@ -239,14 +256,15 @@ function init_phantom()
   boss = {
     x=128,
     y=128,
+    width=16,
+    height=16,
     speed=3,
     pv=100,
   }
 end
 
 function draw_phantom()
-  -- spr(16, boss.x, boss.y, 1, 1, false)
-  rectfill(boss.x, boss.y, boss.x + 16, boss.y + 16, 7)
+  rectfill(boss.x, boss.y, boss.x + boss.width, boss.y + boss.height, 7)
 end
 
 -->8
