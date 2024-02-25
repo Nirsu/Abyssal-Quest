@@ -59,6 +59,8 @@ function game_init()
   }
 
   pod = {
+    x = p.x + 7,
+    y = p.y - 5,
     width = 3,
     height = 4,
     idle = {
@@ -76,7 +78,8 @@ function game_init()
       sy = 4,
       ticks = 0,
       speed = 0.5,
-    }
+    },
+    bullets = {}
   }
 
   init_phantom()
@@ -103,18 +106,47 @@ end
 --pod
 
 function draw_pod()
+  pod.x = p.x + 7
+  pod.y = p.y - 5
+
   if (btn(❎)) then
-    sspr(pod.shooting.sx, pod.shooting.sy, pod.width, pod.height, p.x+7, p.y - 5)
+    sspr(pod.shooting.sx, pod.shooting.sy, pod.width, pod.height, pod.x, pod.y)
   else
-    sspr(pod.idle.sx, pod.idle.sy, pod.width, pod.height, p.x+7, p.y - 5)
+    sspr(pod.idle.sx, pod.idle.sy, pod.width, pod.height, pod.x, pod.y)
   end
+
+  draw_bullets_pod()
 end
 
 function update_pod()
   if (btn(❎)) then
     animateForSspr(pod.shooting, pod.width, pod.shooting.length, pod.shooting.startSx)
+    shoot_pod()
   else
     animateForSspr(pod.idle, pod.width, pod.idle.length, pod.idle.startSx)
+  end
+  update_bullets_pod()
+end
+
+function shoot_pod()
+  local newBullet = {
+    x = pod.x,
+    y = pod.y + 1,
+    speed = 4,
+  }
+  add(pod.bullets, newBullet)
+end
+
+function draw_bullets_pod()
+  for b in all(pod.bullets) do
+    circfill(b.x, b.y, 1, 10)
+  end
+end
+
+function update_bullets_pod()
+  for b in all(pod.bullets) do
+    b.x += b.speed
+    if (b.x < 8 or b.x > 248 or b.y < 8 or b.y > 248) del(pod.bullets, b)
   end
 end
 
