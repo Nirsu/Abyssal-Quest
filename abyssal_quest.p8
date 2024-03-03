@@ -44,6 +44,8 @@ function game_init()
     x=8,
     y=24,
     speed=2,
+    hp=100,
+    max_hp=100,
     -- flip sprite horizontally
     flip = false,
     -- Sprite to draw, sprite frames to use, speed of animation (between 0 == fast and 1 == slow), ticks since last frame
@@ -159,7 +161,7 @@ function update_bullets_pod()
     b.y += b.vy
 
     if (b.x > boss.x and b.x < boss.x + boss.width and b.y > boss.y and b.y < boss.y + boss.height) then
-      boss.pv -= 1
+      boss.hp -= 1
       del(pod.bullets, b)
     end
 
@@ -219,6 +221,7 @@ function update_p()
 end
 
 function draw_p()
+  draw_p_life()
 
   if (p_moving) then
     if (p_dodging) then
@@ -249,6 +252,12 @@ function update_dodging()
  end
 end
 
+function draw_p_life()
+  local cam_x, cam_y = camera()
+  draw_hp_bar(2, 2, p.hp, p.max_hp, 0, 6)
+  camera(cam_x, cam_y)
+end
+
 -->8
 --Phantom Blade
 
@@ -259,11 +268,13 @@ function init_phantom()
     width=16,
     height=16,
     speed=3,
-    pv=100,
+    hp=300,
+    max_hp=300,
   }
 end
 
 function draw_phantom()
+  draw_hp_bar(boss.x, boss.y - 10, boss.hp, boss.max_hp, 0, 12)
   rectfill(boss.x, boss.y, boss.x + boss.width, boss.y + boss.height, 7)
 end
 
@@ -281,7 +292,7 @@ function update_camera(target)
   local focusX = lerp(p.x, target.x, focusMargin)
   local focusY = lerp(p.y, target.y, focusMargin)
 
-  -- Positionne la caméra pour qu'elle centre ce point intermédiaire, tout en assurant une marge autour du joueur
+  -- Positionne la camれたra pour qu'elle centre ce point intermれたdiaire, tout en assurant une marge autour du joueur
   local camX = focusX - 64
   local camY = focusY - 64
 
@@ -311,6 +322,16 @@ function animateForSspr(obj, width, length, defaultSx)
     end
     obj.ticks = 0
   end
+end
+
+function draw_hp_bar(x, y, current_hp, max_hp, bg_col, fg_col)
+  local width = 20
+  local height = 1
+  -- Draw the background
+  rectfill(x - 1, y - height, x + width + 1, y + (height * 2), bg_col)
+  local hp_bar_width = flr((current_hp / max_hp) * width)
+  -- Draw the filled portion
+  if (current_hp > 0) rectfill(x, y, x + hp_bar_width, y + height, fg_col)
 end
 
 __gfx__
