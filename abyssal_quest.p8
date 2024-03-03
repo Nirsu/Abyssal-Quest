@@ -131,8 +131,10 @@ function update_pod()
 end
 
 function shoot_pod()
-  local dx = boss.x - pod.x
-  local dy = boss.y - pod.y
+  local boss_center_x = boss.x + boss.width / 2
+  local boss_center_y = boss.y + boss.height / 2
+  local dx = boss_center_x - pod.x
+  local dy = boss_center_y - pod.y
   local distance = sqrt(dx * dx + dy * dy)
 
   local nx = dx / distance
