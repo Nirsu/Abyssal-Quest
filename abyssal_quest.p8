@@ -102,6 +102,18 @@ function game_draw()
   draw_p()
   draw_pod()
   draw_phantom()
+  draw_hud()
+end
+
+function draw_hud()
+  local cam_x, cam_y = camera()
+  -- Draw player's HP bar
+  draw_hp_bar(2, 2, p.hp, p.max_hp, 20, 0, 6)
+
+  -- Draw boss's HP bar
+  draw_hp_bar(12, 120, boss.hp, boss.max_hp, 100, 0, 12)
+
+  camera(cam_x, cam_y)
 end
 
 -->8
@@ -223,8 +235,6 @@ function update_p()
 end
 
 function draw_p()
-  draw_p_life()
-
   if (p_moving) then
     if (p_dodging) then
       spr(16+ceil((p.timer_dodge/3)), p.x, p.y, 1, 1, p.flip)
@@ -254,12 +264,6 @@ function update_dodging()
  end
 end
 
-function draw_p_life()
-  local cam_x, cam_y = camera()
-  draw_hp_bar(2, 2, p.hp, p.max_hp, 0, 6)
-  camera(cam_x, cam_y)
-end
-
 -->8
 --Phantom Blade
 
@@ -276,7 +280,6 @@ function init_phantom()
 end
 
 function draw_phantom()
-  draw_hp_bar(boss.x, boss.y - 10, boss.hp, boss.max_hp, 0, 12)
   rectfill(boss.x, boss.y, boss.x + boss.width, boss.y + boss.height, 7)
 end
 
@@ -326,8 +329,7 @@ function animateForSspr(obj, width, length, defaultSx)
   end
 end
 
-function draw_hp_bar(x, y, current_hp, max_hp, bg_col, fg_col)
-  local width = 20
+function draw_hp_bar(x, y, current_hp, max_hp, width, bg_col, fg_col)
   local height = 1
   -- Draw the background
   rectfill(x - 1, y - height, x + width + 1, y + (height * 2), bg_col)
