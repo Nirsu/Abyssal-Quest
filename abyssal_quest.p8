@@ -40,6 +40,7 @@ end
 --game
 
 function game_init()
+  game_timer = 0
   p = {
     x=8,
     y=24,
@@ -91,6 +92,8 @@ function game_init()
 end
 
 function game_update()
+  game_timer += 1
+  if (game_timer > 60) game_timer = 0
   update_camera(boss)
   update_p()
   update_pod()
@@ -154,13 +157,15 @@ function shoot_pod()
 
   local speed = 4;
 
-  local newBullet = {
-    x = pod.x,
-    y = pod.y + 1,
-    vx = nx * speed,
-    vy = ny * speed,
-  }
-  add(pod.bullets, newBullet)
+  if (game_timer % 5 == 0) then
+    local newBullet = {
+      x = pod.x,
+      y = pod.y + 1,
+      vx = nx * speed,
+      vy = ny * speed,
+    }
+    add(pod.bullets, newBullet)
+  end
 end
 
 function draw_bullets_pod()
